@@ -7,7 +7,7 @@ def get_current_user(authorization: str = Header(..., alias="Authorization")):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid authorization header")
 
-    parts = authorization.split(" ")
+    parts = authorization.split()
     if len(parts) != 2:
         raise HTTPException(status_code=401, detail="Invalid authorization header")
 
