@@ -8,10 +8,16 @@ def create_user(db: Session, request: UserCreateRequest):
     pass
 
 def get_all_users(db: Session):
-    pass
+    users = db.query(User).all()
+    return users
 
 def get_user_by_id(db: Session, user_id: int):
-    pass
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return user
 
 def update_user(db: Session, user_id: int, request: UserUpdateRequest):
     pass
