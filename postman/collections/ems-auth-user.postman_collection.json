@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "4d0a0728-1b20-4d70-9ebf-cf2312390ef4",
+    "name": "EMS Minimal Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Auth - Register Admin",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\"\n}"
+        },
+        "url": "{{AUTH_BASE_URL}}/auth/register"
+      }
+    },
+    {
+      "name": "02 Auth - Login Admin",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set('ADMIN_TOKEN', json.access_token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": "{{AUTH_BASE_URL}}/auth/login"
+      }
+    },
+    {
+      "name": "03 Users - Create Admin Profile",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin1\",\n  \"name\": \"Admin One\",\n  \"email\": \"admin1@mail.com\",\n  \"address\": \"Cluj\",\n  \"role\": \"admin\"\n}"
+        },
+        "url": "{{USER_BASE_URL}}/users"
+      }
+    },
+    {
+      "name": "04 Auth - Register Client",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"client1\",\n  \"password\": \"client123\",\n  \"role\": \"client\"\n}"
+        },
+        "url": "{{AUTH_BASE_URL}}/auth/register"
+      }
+    },
+    {
+      "name": "05 Users - Create Client Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set('USER_ID', String(json.id));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"client1\",\n  \"name\": \"Client One\",\n  \"email\": \"client1@mail.com\",\n  \"address\": \"Cluj\",\n  \"role\": \"client\"\n}"
+        },
+        "url": "{{USER_BASE_URL}}/users"
+      }
+    },
+    {
+      "name": "06 Auth - Login Client",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set('CLIENT_TOKEN', json.access_token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"client1\",\n  \"password\": \"client123\"\n}"
+        },
+        "url": "{{AUTH_BASE_URL}}/auth/login"
+      }
+    },
+    {
+      "name": "07 Users - Get All",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": "{{USER_BASE_URL}}/users"
+      }
+    },
+    {
+      "name": "08 Users - Get Client By ID",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": "{{USER_BASE_URL}}/users/{{USER_ID}}"
+      }
+    },
+    {
+      "name": "09 Devices - Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set('DEVICE_ID', String(json.id));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Smart Meter 1\",\n  \"max_consumption\": 120.5\n}"
+        },
+        "url": "{{DEVICE_BASE_URL}}/devices"
+      }
+    },
+    {
+      "name": "10 Devices - Get All",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": "{{DEVICE_BASE_URL}}/devices"
+      }
+    },
+    {
+      "name": "11 Devices - Assign To Client",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": {{USER_ID}}\n}"
+        },
+        "url": "{{DEVICE_BASE_URL}}/devices/{{DEVICE_ID}}/assign"
+      }
+    },
+    {
+      "name": "12 Devices - My Devices",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{CLIENT_TOKEN}}" }],
+        "url": "{{DEVICE_BASE_URL}}/devices/me"
+      }
+    },
+    {
+      "name": "13 Devices - Unassign",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": "{{DEVICE_BASE_URL}}/devices/{{DEVICE_ID}}/unassign"
+      }
+    },
+    {
+      "name": "14 Devices - Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": "{{DEVICE_BASE_URL}}/devices/{{DEVICE_ID}}"
+      }
+    }
+  ]
+}
